@@ -19,14 +19,20 @@ class ContentViewController: UIViewController {
     
     // MARK: - UI Property
     
-    private var calendar = FSCalendar().then {
+    private let calendar = FSCalendar().then {
         $0.scope = .week
     }
-    private var indicator = UIView().then {
+    private let indicator = UIView().then {
         $0.backgroundColor = .lightGray
     }
-    private var border = UIView().then {
-        $0.backgroundColor = .lightGray
+    private let border = UIView().then {
+        $0.backgroundColor = UIColor(red: 0.961, green: 0.961, blue: 0.961, alpha: 1)
+    }
+    private let tmpDiary = UILabel().then {
+        $0.lineBreakMode = .byCharWrapping
+        $0.text = "I watched Avatar with my boyfriend at Hongdae CGV. I should have skimmed the previous season - Avatar1.. I really couldn’t ..."
+        $0.numberOfLines = 0
+        $0.textColor = .gray
     }
     
     // MARK: - Life Cycle
@@ -79,7 +85,7 @@ class ContentViewController: UIViewController {
         view.addGestureRecognizer(swipeDown)
     }
     func setLayout() {
-        view.addSubviews([calendar, indicator, border])
+        view.addSubviews([calendar, indicator, border, tmpDiary])
         
         calendar.snp.makeConstraints {
             $0.top.equalTo(view.snp.top).offset(50)
@@ -87,18 +93,21 @@ class ContentViewController: UIViewController {
             $0.height.equalTo(360)
             $0.width.equalTo(view.frame.width-50)
         }
-        
         indicator.snp.makeConstraints {
             $0.top.equalTo(calendar.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(4)
             $0.width.equalTo(72)
         }
-        
         border.snp.makeConstraints {
             $0.top.equalTo(calendar.snp.bottom).offset(30)
             $0.height.equalTo(6)
             $0.width.equalTo(view.frame.width)
+        }
+        tmpDiary.snp.makeConstraints {
+            $0.top.equalTo(border.snp.bottom).offset(50)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(view.frame.width-30)
         }
     }
 }
