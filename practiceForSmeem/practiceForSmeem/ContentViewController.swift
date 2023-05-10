@@ -16,10 +16,13 @@ class ContentViewController: UIViewController {
     // MARK: - Property
     
     private let weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"]
+    var writtenDays = [Date]()
     
     // MARK: - UI Property
     
     private let calendar = FSCalendar().then {
+        $0.appearance.todayColor = UIColor(red: 1, green: 0.427, blue: 0.298, alpha: 1)
+        $0.appearance.selectionColor = UIColor(red: 1, green: 0.427, blue: 0.298, alpha: 1)
         $0.appearance.weekdayTextColor = UIColor(red: 0.09, green: 0.09, blue: 0.086, alpha: 1)
         $0.appearance.weekdayFont = UIFont(name: "Pretendard-Light", size: 14)
         $0.appearance.titleDefaultColor = UIColor(red: 0.721, green: 0.721, blue: 0.721, alpha: 1)
@@ -28,6 +31,7 @@ class ContentViewController: UIViewController {
         $0.appearance.headerTitleFont = UIFont(name: "Pretendard-Regular", size: 14)
         $0.appearance.headerMinimumDissolvedAlpha = 0
         $0.appearance.headerDateFormat = "YYYY년 M월"
+        $0.placeholderType = .none
         $0.headerHeight = 66
         $0.weekdayHeight = 30
         $0.scope = .week
@@ -55,6 +59,7 @@ class ContentViewController: UIViewController {
         setDelegate()
         setSwipe()
         setCalendar()
+        setEvents()
         setLayout()
     }
     
@@ -90,9 +95,21 @@ class ContentViewController: UIViewController {
         view.addGestureRecognizer(swipeUp)
         view.addGestureRecognizer(swipeDown)
     }
+    func setEvents() {
+        let dfMatter = DateFormatter()
+        dfMatter.locale = Locale(identifier: "ko_KR")
+        dfMatter.dateFormat = "yyyy-MM-dd"
+        
+        // events
+        let myFirstEvent = dfMatter.date(from: "2023-05-05")
+        let mySecondEvent = dfMatter.date(from: "2023-05-20")
+        
+        writtenDays = [myFirstEvent!, mySecondEvent!]
+
+    }
     private func setLayout() {
         view.addSubviews([calendar, indicator, border, tmpDiary])
-        
+
         calendar.snp.makeConstraints {
             $0.top.equalTo(view.snp.top).offset(50)
             $0.centerX.equalToSuperview()
@@ -131,4 +148,12 @@ extension ContentViewController: FSCalendarDelegate {
 
 // MARK: - Extension : FSCalendarDataSource
 
-extension ContentViewController: FSCalendarDataSource { }
+extension ContentViewController: FSCalendarDataSource {
+    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        if self.writtenDays.contains(date) {
+            return 1
+        } else {
+            return 0
+        }
+    }
+}
